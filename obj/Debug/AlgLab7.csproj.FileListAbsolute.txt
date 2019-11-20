@@ -1,0 +1,6 @@
+D:\VS_Projects\AlgLab7\bin\Debug\AlgLab7.exe.config
+D:\VS_Projects\AlgLab7\bin\Debug\AlgLab7.exe
+D:\VS_Projects\AlgLab7\bin\Debug\AlgLab7.pdb
+D:\VS_Projects\AlgLab7\obj\Debug\AlgLab7.csprojAssemblyReference.cache
+D:\VS_Projects\AlgLab7\obj\Debug\AlgLab7.exe
+D:\VS_Projects\AlgLab7\obj\Debug\AlgLab7.pdb

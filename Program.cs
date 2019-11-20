@@ -13,6 +13,11 @@ namespace AlgLab7
     {
         static void Main(string[] args)
         {
+            AVLTree<int> tree = new AVLTree<int>();
+            tree.Add(15, 20);
+            tree.Add(15, 15);
+            tree.Add(15, 25);
+            tree.Root = tree.LeftRotation(tree.Root);
         }
     }
 }
