@@ -48,6 +48,16 @@ namespace AlgLab7
                 Trace = trace;
                 BalanceFactor = balanceFactor;
             }
+            /// <summary>
+            /// Проверяет узел на существование
+            /// </summary>
+            /// <returns>true в случае существования</returns>
+            public bool IsExist()
+            {
+                if (this == null)
+                    return false;
+                return true;
+            }
         }
         //
         // Описание самого дерева
@@ -57,14 +67,12 @@ namespace AlgLab7
         /// Ссылка на корень дерева
         /// </summary> 
         public Node<T> Root;
-
         /// <summary>
-        /// Высота данного дерева
+        /// Вернет высоту дерева
         /// </summary>
-        private int height;
         public int Height
         {
-            get { return height; }
+            get { return GetRelativeHeight(Root); }
         }
         //
         // Конструктор
@@ -72,7 +80,6 @@ namespace AlgLab7
         public AVLTree()
         {
             Root = null;
-            height = 0;
         }
 
         /// <summary> 
@@ -84,7 +91,6 @@ namespace AlgLab7
             if (Root == null)
             {
                 Root = new Node<T>(data, key);
-                height++;
                 return;
             }
             Node<T> current = Root;
@@ -106,10 +112,30 @@ namespace AlgLab7
                 if (key < currentNode.Key)
                 {
                     currentNode.LeftChild = Add(currentNode.LeftChild, data, key);
+                    currentNode.BalanceFactor = GetRelativeHeight(currentNode.RightChild) - GetRelativeHeight(currentNode.LeftChild);
+                    if (currentNode.BalanceFactor == -2)
+                    {
+                        if (currentNode.LeftChild.BalanceFactor == -1)
+                            currentNode = RightRotation(currentNode);   // нужно изменить алгоритм поворота
+                        else if (currentNode.LeftChild.BalanceFactor == 1)
+                        {
+                            // лево-правый поворот
+                        }
+                    }
                 }
                 else
                 {
                     currentNode.RightChild = Add(currentNode.RightChild, data, key);
+                    currentNode.BalanceFactor = GetRelativeHeight(currentNode.RightChild) - GetRelativeHeight(currentNode.LeftChild);
+                    if (currentNode.BalanceFactor == 2)
+                    {
+                        if (currentNode.RightChild.BalanceFactor == 1)
+                            currentNode = LeftRotation(currentNode);      // нужно изменить алгоритм поворота
+                        else if (currentNode.RightChild.BalanceFactor == -1)
+                        {
+                            // прово-левый поворот
+                        }
+                    }
                 }
             }
             else
@@ -119,6 +145,30 @@ namespace AlgLab7
             }
             return currentNode;
         }
+        /// <summary>
+        /// Считает относительную выстоту (относительно заданного узла дерева)
+        /// если узла не существует, то вернет 0, высота корня = 1
+        /// </summary>
+        /// <param name="startNode"></param>
+        /// <returns></returns>
+        private int GetRelativeHeight(Node<T> startNode)
+        {
+            int height = 0;
+            if (startNode != null)
+            {
+                height = 1;
+                if (startNode.LeftChild != null)
+                {
+                    height += GetRelativeHeight(startNode.LeftChild);
+                }
+                if (startNode.RightChild != null)
+                {
+                    height += GetRelativeHeight(startNode.RightChild);
+                }
+            }
+            return height;
+        }
+
         /// <summary> 
         /// Поворачивает дерево вокруг заданного узла влево.
         /// Вернет ссылку на нового потомка для родительского
@@ -146,6 +196,22 @@ namespace AlgLab7
             currentNode.LeftChild = toReturn.RightChild;
             toReturn.RightChild = currentNode;
             return toReturn;
+        }
+        /// <summary>
+        /// Устанавливает след для всех узлов дерева
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <param name="nodeTrace"></param>
+        private void PutTrace(Node<T> currentNode, string nodeTrace)
+        {
+            if (currentNode == null)
+                return;
+            else if (currentNode == Root)
+                currentNode.Trace = "1";
+            if (currentNode.LeftChild != null)
+                PutTrace(currentNode.LeftChild, nodeTrace + "0");
+            if (currentNode.RightChild != null)
+                PutTrace(currentNode.RightChild, nodeTrace + "1");
         }
     }
 }
