@@ -13,11 +13,6 @@ namespace AlgLab7
     {
         static void Main(string[] args)
         {
-            AVLTree<int> tree = new AVLTree<int>();
-            tree.Add(15, 20);
-            tree.Add(15, 15);
-            tree.Add(15, 25);
-            tree.Root = tree.LeftRotation(tree.Root);
             bool goOut;
             AVLTree<int> avlTree = new AVLTree<int>();
             do
@@ -36,7 +31,7 @@ namespace AlgLab7
                                 do
                                 {
                                     Console.WriteLine("\nУкажите количество узлов в дереве (не более 100 и не менее 1)");
-                                } while (Int32.TryParse(Console.ReadLine(), out numberOfNodes));
+                                } while (!Int32.TryParse(Console.ReadLine(), out numberOfNodes));
                             } while (numberOfNodes < 1 || numberOfNodes > 100);
                             Random random = new Random();
                             for (int i = 0; i < numberOfNodes; i++)
@@ -59,7 +54,7 @@ namespace AlgLab7
                                 do
                                 {
                                     Console.WriteLine("\nУкажите количество узлов в дереве, которое хотите добавить (не более 10 и не менее 1)");
-                                } while (Int32.TryParse(Console.ReadLine(), out numberOfNodes));
+                                } while (!Int32.TryParse(Console.ReadLine(), out numberOfNodes));
                             } while (numberOfNodes < 1 || numberOfNodes > 10);
                             for (int i = 0; i < numberOfNodes; i++)
                             {
@@ -77,23 +72,23 @@ namespace AlgLab7
                     //
                     // p - показать дерево (сделать обход, без связей)
                     //
-                    case 'p':
-                        if (avlTree.ShowTree() == false)
-                        {
-                            Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
-                            Console.ReadKey();
-                        }
-                        break;
+                    //case 'p':
+                    //    if (avlTree.ShowTree() == false)
+                    //    {
+                    //        Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
+                    //        Console.ReadKey();
+                    //    }
+                    //    break;
                     //
                     // r - показать таблицу связей дерева
                     //
-                    case 'r':
-                        if (avlTree.ShowTreeLinks() == false)
-                        {
-                            Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
-                            Console.ReadKey();
-                        }
-                        break;
+                    //case 'r':
+                    //    if (avlTree.ShowTreeLinks() == false)
+                    //    {
+                    //        Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
+                    //        Console.ReadKey();
+                    //    }
+                    //    break;
                     //
                     // h - Получить высоту дерева
                     //
@@ -104,10 +99,10 @@ namespace AlgLab7
                     //
                     // v - получить информацию о корне
                     //
-                    case 'v':
-                        avlTree.GetRootInfo();
-                        Console.ReadKey();
-                        break;
+                    //case 'v':
+                    //    avlTree.GetRootInfo();
+                    //    Console.ReadKey();
+                    //    break;
                     //
                     // ESC - выход
                     //

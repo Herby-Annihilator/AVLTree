@@ -27,7 +27,7 @@ namespace AlgLab7
                 Console.WriteLine("* v - получить информацию о корне");
                 Console.WriteLine("* ESC - выход");
                 Console.Write("Ваш выбор - ");
-                symbol = Convert.ToChar(Console.ReadKey(true));
+                symbol = Convert.ToChar(Console.ReadKey(true).KeyChar);
             } while (symbol != 'c' && symbol != 'b' && symbol != 'p' && symbol != 'r' && symbol != 'h' && symbol != 'v' && symbol != 27);
             return symbol;
         }

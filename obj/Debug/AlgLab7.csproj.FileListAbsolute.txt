@@ -4,3 +4,9 @@ D:\VS_Projects\AlgLab7\bin\Debug\AlgLab7.pdb
 D:\VS_Projects\AlgLab7\obj\Debug\AlgLab7.csprojAssemblyReference.cache
 D:\VS_Projects\AlgLab7\obj\Debug\AlgLab7.exe
 D:\VS_Projects\AlgLab7\obj\Debug\AlgLab7.pdb
+C:\VS_Projects\AVLTree\bin\Debug\AlgLab7.exe.config
+C:\VS_Projects\AVLTree\bin\Debug\AlgLab7.exe
+C:\VS_Projects\AVLTree\bin\Debug\AlgLab7.pdb
+C:\VS_Projects\AVLTree\obj\Debug\AlgLab7.csprojAssemblyReference.cache
+C:\VS_Projects\AVLTree\obj\Debug\AlgLab7.exe
+C:\VS_Projects\AVLTree\obj\Debug\AlgLab7.pdb

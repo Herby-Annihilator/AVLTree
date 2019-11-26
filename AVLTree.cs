@@ -93,10 +93,8 @@ namespace AlgLab7
                 Root = new Node<T>(data, key);
                 return;
             }
-            Node<T> current = Root;
-            // добавить слева
-            Add(Root, data, key);
-
+            Root = Add(Root, data, key);
+            PutTrace(Root, "1");
         }
         /// <summary>
         /// Для использования внутри основного метода Add.
@@ -116,10 +114,12 @@ namespace AlgLab7
                     if (currentNode.BalanceFactor == -2)
                     {
                         if (currentNode.LeftChild.BalanceFactor == -1)
-                            currentNode = RightRotation(currentNode);   // нужно изменить алгоритм поворота
+                            currentNode = RightRotation(currentNode);   
                         else if (currentNode.LeftChild.BalanceFactor == 1)
                         {
-                            // лево-правый поворот
+                            currentNode.LeftChild = LeftRotation(currentNode.LeftChild);
+                            currentNode = RightRotation(currentNode);
+                            // разобраться с балансировкой при больших поворотах
                         }
                     }
                 }
@@ -130,10 +130,12 @@ namespace AlgLab7
                     if (currentNode.BalanceFactor == 2)
                     {
                         if (currentNode.RightChild.BalanceFactor == 1)
-                            currentNode = LeftRotation(currentNode);      // нужно изменить алгоритм поворота
+                            currentNode = LeftRotation(currentNode);      
                         else if (currentNode.RightChild.BalanceFactor == -1)
                         {
-                            // прово-левый поворот
+                            currentNode.RightChild = RightRotation(currentNode.RightChild);
+                            currentNode = LeftRotation(currentNode);
+                            // разобраться с балансировкой при больших поворотах
                         }
                     }
                 }
@@ -154,19 +156,24 @@ namespace AlgLab7
         private int GetRelativeHeight(Node<T> startNode)
         {
             int height = 0;
+            int leftHeight = 0;
+            int rightHeight = 0;
             if (startNode != null)
             {
                 height = 1;
                 if (startNode.LeftChild != null)
                 {
-                    height += GetRelativeHeight(startNode.LeftChild);
+                    leftHeight += GetRelativeHeight(startNode.LeftChild);
                 }
                 if (startNode.RightChild != null)
                 {
-                    height += GetRelativeHeight(startNode.RightChild);
+                    rightHeight += GetRelativeHeight(startNode.RightChild);
                 }
             }
-            return height;
+            if (leftHeight > rightHeight)
+                return leftHeight + height;
+            else 
+                return rightHeight + height;
         }
 
         /// <summary> 
@@ -177,10 +184,15 @@ namespace AlgLab7
         public Node<T> LeftRotation(Node<T> currentNode)
         {
             if (currentNode.RightChild == null)
+            {
+                currentNode.BalanceFactor = 0;
                 return currentNode;
+            }
             Node<T> toReturn = currentNode.RightChild;
             currentNode.RightChild = toReturn.LeftChild;
             toReturn.LeftChild = currentNode;
+            currentNode.BalanceFactor = 0;
+            toReturn.BalanceFactor = 0;
             return toReturn;
         }
         /// <summary> 
@@ -191,10 +203,15 @@ namespace AlgLab7
         public Node<T> RightRotation(Node<T> currentNode)
         {
             if (currentNode.LeftChild == null)
+            {
+                currentNode.BalanceFactor = 0;
                 return currentNode;
+            }
             Node<T> toReturn = currentNode.LeftChild;
             currentNode.LeftChild = toReturn.RightChild;
             toReturn.RightChild = currentNode;
+            currentNode.BalanceFactor = 0;
+            toReturn.BalanceFactor = 0;
             return toReturn;
         }
         /// <summary>
@@ -212,6 +229,20 @@ namespace AlgLab7
                 PutTrace(currentNode.LeftChild, nodeTrace + "0");
             if (currentNode.RightChild != null)
                 PutTrace(currentNode.RightChild, nodeTrace + "1");
+        }
+
+        public void GetRootInfo()
+        {
+            Console.WriteLine("==========Корень данного дерева==========");
+            Console.WriteLine("Значение ключа = " + Root.Key + " Данные = " + Root.Data);
+            if (Root.LeftChild.IsExist())
+                Console.WriteLine("Потомок слева существует: ключ = " + Root.LeftChild.Key + " Данные = " + Root.LeftChild.Data);
+            else
+                Console.WriteLine("Потомков слева нет");
+            if (Root.RightChild.IsExist())
+                Console.WriteLine("Потомок справа существует: ключ = " + Root.RightChild.Key + " Данные = " + Root.RightChild.Data);
+            else
+                Console.WriteLine("Потомков справа нет");
         }
     }
 }
