@@ -117,9 +117,7 @@ namespace AlgLab7
                             currentNode = RightRotation(currentNode);   
                         else if (currentNode.LeftChild.BalanceFactor == 1)
                         {
-                            currentNode.LeftChild = LeftRotation(currentNode.LeftChild);
-                            currentNode = RightRotation(currentNode);
-                            // разобраться с балансировкой при больших поворотах
+                            currentNode = LeftRightRotation(currentNode);
                         }
                     }
                 }
@@ -133,9 +131,7 @@ namespace AlgLab7
                             currentNode = LeftRotation(currentNode);      
                         else if (currentNode.RightChild.BalanceFactor == -1)
                         {
-                            currentNode.RightChild = RightRotation(currentNode.RightChild);
-                            currentNode = LeftRotation(currentNode);
-                            // разобраться с балансировкой при больших поворотах
+                            currentNode = RightLeftRotation(currentNode);
                         }
                     }
                 }
@@ -215,6 +211,71 @@ namespace AlgLab7
             return toReturn;
         }
         /// <summary>
+        /// Лево-правый поворот (большой правый)
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <returns></returns>
+        public Node<T> LeftRightRotation(Node<T> currentNode)
+        {
+            if (currentNode == null)
+            {
+                return null;
+            }
+            Node<T> leftChildOfCurrentNode = currentNode.LeftChild;
+            Node<T> toReturn = leftChildOfCurrentNode.RightChild;
+            if (toReturn.BalanceFactor > 0)
+            {
+                leftChildOfCurrentNode.BalanceFactor = -1;
+            }
+            else
+            {
+                leftChildOfCurrentNode.BalanceFactor = 0;
+            }
+            if (toReturn.BalanceFactor < 0)
+            {
+                currentNode.BalanceFactor = 1;
+            }
+            else
+            {
+                currentNode.BalanceFactor = 0;
+            }
+            leftChildOfCurrentNode.RightChild = toReturn.LeftChild;
+            toReturn.LeftChild = leftChildOfCurrentNode;
+
+            currentNode.LeftChild = toReturn.RightChild;
+            toReturn.RightChild = currentNode;
+
+            return toReturn;
+        }
+        /// <summary>
+        /// Право-левый поворот (большой левый)
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <returns></returns>
+        public Node<T> RightLeftRotation(Node<T> currentNode)
+        {
+            if (currentNode == null)
+                return null;
+            Node<T> rightChildOfCurrentNode = currentNode.RightChild;
+            Node<T> toReturn = rightChildOfCurrentNode.LeftChild;
+            if (toReturn.BalanceFactor > 0)
+                currentNode.BalanceFactor = -1;
+            else
+                currentNode.BalanceFactor = 0;
+            if (toReturn.BalanceFactor < 0)
+                rightChildOfCurrentNode.BalanceFactor = 1;
+            else
+                rightChildOfCurrentNode.BalanceFactor = 0;
+
+            rightChildOfCurrentNode.LeftChild = toReturn.RightChild;
+            toReturn.RightChild = rightChildOfCurrentNode;
+
+            currentNode.RightChild = toReturn.LeftChild;
+            toReturn.LeftChild = currentNode;
+
+            return toReturn;
+        }
+        /// <summary>
         /// Устанавливает след для всех узлов дерева
         /// </summary>
         /// <param name="currentNode"></param>
@@ -229,6 +290,7 @@ namespace AlgLab7
                 PutTrace(currentNode.LeftChild, nodeTrace + "0");
             if (currentNode.RightChild != null)
                 PutTrace(currentNode.RightChild, nodeTrace + "1");
+            currentNode.Trace = nodeTrace;
         }
 
         public void GetRootInfo()
