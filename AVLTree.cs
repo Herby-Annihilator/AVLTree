@@ -87,7 +87,7 @@ namespace AlgLab7
         /// как ключ используется поле key
         /// </summary>
         public void Add(T data = default(T), int key = 0)
-        {          
+        {
             if (Root == null)
             {
                 Root = new Node<T>(data, key);
@@ -114,7 +114,7 @@ namespace AlgLab7
                     if (currentNode.BalanceFactor == -2)
                     {
                         if (currentNode.LeftChild.BalanceFactor == -1)
-                            currentNode = RightRotation(currentNode);   
+                            currentNode = RightRotation(currentNode);
                         else if (currentNode.LeftChild.BalanceFactor == 1)
                         {
                             currentNode = LeftRightRotation(currentNode);
@@ -128,7 +128,7 @@ namespace AlgLab7
                     if (currentNode.BalanceFactor == 2)
                     {
                         if (currentNode.RightChild.BalanceFactor == 1)
-                            currentNode = LeftRotation(currentNode);      
+                            currentNode = LeftRotation(currentNode);
                         else if (currentNode.RightChild.BalanceFactor == -1)
                         {
                             currentNode = RightLeftRotation(currentNode);
@@ -168,7 +168,7 @@ namespace AlgLab7
             }
             if (leftHeight > rightHeight)
                 return leftHeight + height;
-            else 
+            else
                 return rightHeight + height;
         }
 
@@ -305,6 +305,63 @@ namespace AlgLab7
                 Console.WriteLine("Потомок справа существует: ключ = " + Root.RightChild.Key + " Данные = " + Root.RightChild.Data);
             else
                 Console.WriteLine("Потомков справа нет");
+        }
+        /// <summary>
+        /// Удаляет узел с заданным следом. Выкидывает исключения.
+        /// </summary>
+        /// <param name="trace"></param>
+        public void DeleteThisTrace(string trace)
+        {
+            if (Root == null)
+                return;
+
+        }
+        /// <summary>
+        /// Удаляет узел с заданным следом, только для использования внутри основного метода Delete.....().
+        /// Возвращает ссылку на новый узел (старый удаляется)
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <param name="trace"></param>
+        /// <returns></returns>
+        private Node<T> DeleteThisTrace(Node<T> currentNode, string trace)
+        {
+            if (currentNode != null)
+            {
+                int path = Subroutines.CompareTraces(currentNode.Trace, trace);
+                if (path == -1)
+                {
+                    currentNode.LeftChild = DeleteThisTrace(currentNode.LeftChild, trace);
+                }
+                else if (path == 1)
+                {
+                    currentNode.RightChild = DeleteThisTrace(currentNode.RightChild, trace);
+                }
+                else if (path == -2)       // здесь по-хорошему бы стек почистить да выйти из метода
+                    return currentNode;
+                else if (path == 0)
+                {
+                    if (!currentNode.RightChild.IsExist())
+                        currentNode = currentNode.LeftChild;
+                    else
+                    {
+
+                    }
+                }
+            }
+            else
+                throw new Exception("Узел с таким следом не найден");
+            return currentNode;
+        }
+        /// <summary>
+        /// Вернет минимальный элемент в дереве, начиная от заданного узла
+        /// </summary>
+        /// <param name="currentNode">точка отсчета</param>
+        /// <returns></returns>
+        private Node<T> FindMinNode(Node<T> currentNode)
+        {
+            if (currentNode.LeftChild.IsExist())
+                currentNode = FindMinNode(currentNode.LeftChild);
+            return currentNode;
         }
     }
 }

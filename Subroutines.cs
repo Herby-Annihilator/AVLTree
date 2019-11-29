@@ -109,5 +109,39 @@ namespace AlgLab7
             } while (Int32.TryParse(strNum, out number) == false);
             return number;
         }
+        /// <summary>
+        /// Сравнивает указанные строки-следы. Вернет 0, если эти следы эдентичны,
+        /// -1, если искомый след находится в левом поддереве, 1, если искомый
+        /// след находится в правом поддереве.
+        /// </summary>
+        /// <param name="currentTrace">текущий след</param>
+        /// <param name="desiredTrace">след, который надо найти</param>
+        /// <returns></returns>
+        public static int CompareTraces(string currentTrace, string desiredTrace)
+        {
+            if (currentTrace == null || desiredTrace == null)
+                throw new NullReferenceException("Несуществующая строка!");
+            else if (currentTrace.Length == 0 || desiredTrace.Length == 0)
+                throw new FormatException("Длина одной из строк == 0");
+            if (currentTrace.Length > desiredTrace.Length)
+                throw new Exception("Текущая строка не может быть длиннее заданной строки");
+
+            int isEquals = 0;
+            if (currentTrace == desiredTrace)
+                isEquals = 0;              // данные следы идентичны
+            else
+            {
+                if (desiredTrace.Substring(0, currentTrace.Length) == currentTrace)
+                {
+                    if (desiredTrace[currentTrace.Length + 1] == '1')
+                        isEquals = 1;                     // идем вправо
+                    else if (desiredTrace[currentTrace.Length] == '0')
+                        isEquals = -1;               // идем влево
+                }
+                else
+                    return -2;     // значит такого следа нет вообще
+            }
+            return isEquals;
+        }
     }
 }
