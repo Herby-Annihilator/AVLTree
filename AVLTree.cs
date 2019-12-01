@@ -310,11 +310,15 @@ namespace AlgLab7
         /// Удаляет узел с заданным следом. Выкидывает исключения.
         /// </summary>
         /// <param name="trace"></param>
-        public void DeleteThisTrace(string trace)
+        public bool DeleteThisTrace(string trace)
         {
             if (Root == null)
-                return;
-
+                return false;
+            Root = DeleteThisTrace(Root, trace);
+            //
+            // Здесь можно вставить переустановку следов узлов
+            //
+            return true;
         }
         /// <summary>
         /// Удаляет узел с заданным следом, только для использования внутри основного метода Delete.....().
@@ -341,26 +345,71 @@ namespace AlgLab7
                 else if (path == 0)
                 {
                     if (!currentNode.RightChild.IsExist())
-                        currentNode = currentNode.LeftChild;
+                        currentNode = currentNode.LeftChild;     // здесь можно поставить оператор return
                     else
                     {
-
+                        Node<T> currentNodeLeftChild = currentNode.LeftChild;
+                        Node<T> currentNodeRightChild = FindMinNode(currentNode.RightChild, ref currentNode); // в currentNode окажется минимальный элемент из правого поддерева
+                        currentNode.LeftChild = currentNodeLeftChild;
+                        currentNode.RightChild = currentNodeRightChild;
                     }
                 }
             }
             else
                 throw new Exception("Узел с таким следом не найден");
+            currentNode = Balance(currentNode);
             return currentNode;
         }
         /// <summary>
-        /// Вернет минимальный элемент в дереве, начиная от заданного узла
+        /// Вернет минимальный элемент в дереве, начиная от заданного узла, а также удалит его из его изначального места.
         /// </summary>
         /// <param name="currentNode">точка отсчета</param>
         /// <returns></returns>
-        private Node<T> FindMinNode(Node<T> currentNode)
+        private Node<T> FindMinNode(Node<T> currentNode, ref Node<T> minNode)
         {
             if (currentNode.LeftChild.IsExist())
-                currentNode = FindMinNode(currentNode.LeftChild);
+            {
+                currentNode.LeftChild = FindMinNode(currentNode.LeftChild, ref minNode);
+                currentNode.BalanceFactor = currentNode.RightChild.BalanceFactor - currentNode.LeftChild.BalanceFactor;
+                if (currentNode.BalanceFactor == -2)
+                    if (currentNode.LeftChild.BalanceFactor == -1)
+                        currentNode = RightRotation(currentNode);
+                    else if (currentNode.LeftChild.BalanceFactor == 1)
+                        currentNode = LeftRightRotation(currentNode);
+            }
+            else
+            {
+                minNode = currentNode;
+                Node<T> toReturn = currentNode.RightChild;
+                currentNode = null;
+                return toReturn;
+            }
+            return currentNode;
+        }
+        /// <summary>
+        /// Балансирует авл-дерево относительно заданного узла, но не все дерево.
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <returns></returns>
+        private Node<T> Balance(Node<T> currentNode)
+        {
+            currentNode.BalanceFactor = currentNode.RightChild.BalanceFactor - currentNode.LeftChild.BalanceFactor;
+            if (currentNode.BalanceFactor > 2 || currentNode.BalanceFactor < -2)
+                throw new InvalidOperationException("Ошибка балансировки");
+            if (currentNode.BalanceFactor == -2)
+            {
+                if (currentNode.LeftChild.BalanceFactor == -1)
+                    currentNode = RightRotation(currentNode);
+                else
+                    currentNode = LeftRightRotation(currentNode);
+            }
+            else if (currentNode.BalanceFactor == 2)
+            {
+                if (currentNode.RightChild.BalanceFactor == 1)
+                    currentNode = LeftRotation(currentNode);
+                else
+                    currentNode = RightLeftRotation(currentNode);
+            }
             return currentNode;
         }
     }
