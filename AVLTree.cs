@@ -6,9 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlgLab7
 {
@@ -57,6 +54,12 @@ namespace AlgLab7
                 if (this == null)
                     return false;
                 return true;
+            }
+            public bool IsLeaf()
+            {
+                if (this.LeftChild == null && this.RightChild == null)
+                    return true;
+                return false;
             }
         }
         //
@@ -275,8 +278,16 @@ namespace AlgLab7
 
             return toReturn;
         }
+        public void PutRightBalance(Node<T> currentNode)
+        {
+            if (currentNode == null)
+                return;
+            currentNode.BalanceFactor = GetRelativeHeight(currentNode.RightChild) - GetRelativeHeight(currentNode.LeftChild);
+            PutRightBalance(currentNode.LeftChild);
+            PutRightBalance(currentNode.RightChild);
+        }
         /// <summary>
-        /// Устанавливает след для всех узлов дерева
+        /// Устанавливает след для всех узлов дерева, начиная с заданного
         /// </summary>
         /// <param name="currentNode"></param>
         /// <param name="nodeTrace"></param>
@@ -292,10 +303,23 @@ namespace AlgLab7
                 PutTrace(currentNode.RightChild, nodeTrace + "1");
             currentNode.Trace = nodeTrace;
         }
-
+        /// <summary>
+        /// Устанавливает след для всех узлов дерева
+        /// </summary>
+        /// <returns></returns>
+        public bool PutTrace()
+        {
+            if (Root == null)
+                return false;
+            PutTrace(Root, "1");
+            return true;
+        }
+        /// <summary>
+        /// Выводит иноформацию о корне данного дерева
+        /// </summary>
         public void GetRootInfo()
         {
-            Console.WriteLine("==========Корень данного дерева==========");
+            Console.WriteLine("==========Корень данного дерева==========\n");
             Console.WriteLine("Значение ключа = " + Root.Key + " Данные = " + Root.Data);
             if (Root.LeftChild.IsExist())
                 Console.WriteLine("Потомок слева существует: ключ = " + Root.LeftChild.Key + " Данные = " + Root.LeftChild.Data);
@@ -344,7 +368,7 @@ namespace AlgLab7
                     return currentNode;
                 else if (path == 0)
                 {
-                    if (!currentNode.RightChild.IsExist())
+                    if (currentNode.RightChild == null)
                         currentNode = currentNode.LeftChild;     // здесь можно поставить оператор return
                     else
                     {
@@ -356,7 +380,7 @@ namespace AlgLab7
                 }
             }
             else
-                throw new Exception("Узел с таким следом не найден");
+                throw new InvalidOperationException("Узел с таким следом не найден");
             currentNode = Balance(currentNode);
             return currentNode;
         }
@@ -367,10 +391,10 @@ namespace AlgLab7
         /// <returns></returns>
         private Node<T> FindMinNode(Node<T> currentNode, ref Node<T> minNode)
         {
-            if (currentNode.LeftChild.IsExist())
+            if (currentNode.LeftChild != null)
             {
                 currentNode.LeftChild = FindMinNode(currentNode.LeftChild, ref minNode);
-                currentNode.BalanceFactor = currentNode.RightChild.BalanceFactor - currentNode.LeftChild.BalanceFactor;
+                currentNode.BalanceFactor = GetRelativeHeight(currentNode.RightChild) - GetRelativeHeight(currentNode.LeftChild);
                 if (currentNode.BalanceFactor == -2)
                     if (currentNode.LeftChild.BalanceFactor == -1)
                         currentNode = RightRotation(currentNode);
@@ -393,7 +417,9 @@ namespace AlgLab7
         /// <returns></returns>
         private Node<T> Balance(Node<T> currentNode)
         {
-            currentNode.BalanceFactor = currentNode.RightChild.BalanceFactor - currentNode.LeftChild.BalanceFactor;
+            if (currentNode == null)
+                return currentNode;
+            currentNode.BalanceFactor = GetRelativeHeight(currentNode.RightChild) - GetRelativeHeight(currentNode.LeftChild);
             if (currentNode.BalanceFactor > 2 || currentNode.BalanceFactor < -2)
                 throw new InvalidOperationException("Ошибка балансировки");
             if (currentNode.BalanceFactor == -2)
@@ -411,6 +437,74 @@ namespace AlgLab7
                     currentNode = RightLeftRotation(currentNode);
             }
             return currentNode;
+        }
+        /// <summary>
+        /// Вид дерева при обходе по принципу лево-корень-право
+        /// </summary>
+        /// <returns></returns>
+        public bool ShowTree()
+        {
+            if (this.Root == null)
+                return false;
+            Stack<Node<T>> stack = new Stack<Node<T>>();
+            Node<T> currentNode = Root;
+            Console.WriteLine("================Вид дерева при обходе по принципу лево-корень-право==================\n");
+            GetRootInfo();
+            Console.WriteLine("\n");
+            while (!(currentNode == null && stack.Count == 0))
+            {
+                if (currentNode != null)
+                {
+                    stack.Push(currentNode);
+                    currentNode = currentNode.LeftChild;
+                }
+                else
+                {
+                    currentNode = stack.Pop();
+                    Console.Write(currentNode.Key + " // ");
+                    currentNode = currentNode.RightChild;
+                }
+            }
+            return true;
+        }
+        /// <summary>
+        /// Покажет таблицу ссылок в данном экземпляре авл-дерева
+        /// </summary>
+        /// <returns></returns>
+        public bool ShowTreeLinks()
+        {
+            if (this.Root == null)
+                return false;
+            Stack<Node<T>> stack = new Stack<Node<T>>();
+            Node<T> currentNode = Root;
+            Console.WriteLine("\n");
+            GetRootInfo();
+            Console.WriteLine("\n");
+            Console.WriteLine("================Таблица ссылок в данном экземпляре авл-дерева==================\n");
+            Console.WriteLine("| Значение в узле + след|  Левый потомок|  Правый потомок|\n");
+            while (!(currentNode == null && stack.Count == 0))
+            {
+                if (currentNode != null)
+                {
+                    stack.Push(currentNode);
+                    currentNode = currentNode.LeftChild;
+                }
+                else
+                {
+                    currentNode = stack.Pop();
+                    Console.Write("  " + currentNode.Key + " \t" + "\"" + currentNode.Trace + "\"" + " \t\t");
+                    if (currentNode.LeftChild != null)
+                        Console.Write("  " + currentNode.LeftChild.Key + " \t" + "\"" + currentNode.LeftChild.Trace + "\"" + " \t\t");
+                    else
+                        Console.Write("\t нет\t\t");
+                    if (currentNode.RightChild != null)
+                        Console.Write("  " + currentNode.RightChild.Key + " \t" + "\"" + currentNode.RightChild.Trace + "\"" + " \n\n");
+                    else
+                        Console.Write("\t нет\n\n");
+                    currentNode = currentNode.RightChild;
+                }
+            }
+            return true;
         }
     }
 }

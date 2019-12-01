@@ -2,10 +2,7 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace AlgLab7
 {
@@ -38,6 +35,12 @@ namespace AlgLab7
                                 avlTree.Add(random.Next(-50, 50), random.Next(-50, 50));
                             random = null;
                             Subroutines.SaveTreeInFile(avlTree, "input.dat");
+                            StreamWriter writer = new StreamWriter("output.dat", true);
+                            writer.WriteLine("===============================================================================");
+                            writer.WriteLine("После добавления узлов получилось дерево следующего вида\n");
+                            writer.WriteLine("===============================================================================");
+                            writer.Close();
+                            Subroutines.AddFromFileToFile("input.dat", "output.dat");
                             Console.WriteLine("\nДобавление прошло успешно, нажмите что-нибудь!");
                             Console.ReadKey();
                             break;
@@ -65,44 +68,133 @@ namespace AlgLab7
                                 avlTree.Add(nodeKey, nodeKey);
                             }
                             Subroutines.SaveTreeInFile(avlTree, "input.dat");
+                            StreamWriter writer = new StreamWriter("output.dat", true);
+                            writer.WriteLine("===============================================================================");
+                            writer.WriteLine("После добавления узлов получилось дерево следующего вида\n");
+                            writer.WriteLine("===============================================================================");
+                            writer.Close();
+                            Subroutines.AddFromFileToFile("input.dat", "output.dat");
                             Console.WriteLine("\nДобавление прошло успешно, нажмите что-нибудь!");
+                            Console.ReadKey();
+                            break;
+                        }
+                    //
+                    // * d - удалить узел с заданным следом
+                    //
+                    case 'd':
+                        {
+                            string trace;
+                            do
+                            {
+                                Console.Write("Введите интересующий вас след: ");
+                                trace = Console.ReadLine();
+                            } while (!Subroutines.IsTrace(trace));
+
+                            try
+                            {
+                                avlTree.DeleteThisTrace(trace);
+                            }
+                            catch(NullReferenceException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
+                            catch(FormatException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
+                            catch(InvalidOperationException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
+                            catch(Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
+                            StreamWriter writer = new StreamWriter("output.dat", true);
+                            writer.WriteLine("===============================================================================");
+                            writer.WriteLine("После удаления узла со следом " + trace + " получилось дерево следующего вида\n");
+                            writer.WriteLine("===============================================================================");
+                            writer.Close();
+                            try
+                            {
+                                Subroutines.AddLinksTableToFile(avlTree, "output.dat");
+                            }
+                            catch(FileNotFoundException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
+                            Console.WriteLine("Удаление прошло успешно. Нажмите что-нибудь");
                             Console.ReadKey();
                             break;
                         }
                     //
                     // p - показать дерево (сделать обход, без связей)
                     //
-                    //case 'p':
-                    //    if (avlTree.ShowTree() == false)
-                    //    {
-                    //        Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
-                    //        Console.ReadKey();
-                    //    }
-                    //    break;
+                    case 'p':
+                        if (avlTree.ShowTree() == false)
+                        {
+                            Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                            Console.ReadKey();
+                        }
+                        break;
                     //
                     // r - показать таблицу связей дерева
                     //
-                    //case 'r':
-                    //    if (avlTree.ShowTreeLinks() == false)
-                    //    {
-                    //        Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
-                    //        Console.ReadKey();
-                    //    }
-                    //    break;
+                    case 'r':
+                        if (avlTree.ShowTreeLinks() == false)
+                        {
+                            Console.WriteLine("Дерево пусто! Нажмите что-нибудь");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                            Console.ReadKey();
+                        }
+                        break;
                     //
                     // h - Получить высоту дерева
                     //
                     case 'h':
-                        Console.WriteLine("Высота данного дерева = " + avlTree.Height);
+                        Console.WriteLine(" Высота данного дерева = " + avlTree.Height);
                         Console.ReadKey();
                         break;
                     //
                     // v - получить информацию о корне
                     //
-                    //case 'v':
-                    //    avlTree.GetRootInfo();
-                    //    Console.ReadKey();
-                    //    break;
+                    case 'v':
+                        Console.WriteLine("\n");
+                        avlTree.GetRootInfo();
+                        Console.ReadKey();
+                        break;
+                    //
+                    // * n - установить правильные следы в дереве
+                    //
+                    case 'n':
+                        {
+                            if (avlTree.PutTrace() == false)
+                            {
+                                Console.WriteLine("Невозможно восстановить следы");
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
+                            break;
+                        }
                     //
                     // ESC - выход
                     //

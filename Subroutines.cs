@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace AlgLab7
@@ -21,23 +18,95 @@ namespace AlgLab7
                 Console.Clear();
                 Console.WriteLine("* c - создать дерево и заполнить его случайными величинами");
                 Console.WriteLine("* b - добавить элементы в дерево вручную");
+                Console.WriteLine("* d - удалить узел с заданным следом");
                 Console.WriteLine("* p - показать дерево (сделать обход, без связей)");
                 Console.WriteLine("* r - показать таблицу связей дерева");
                 Console.WriteLine("* h - Получить высоту дерева");
                 Console.WriteLine("* v - получить информацию о корне");
+                Console.WriteLine("* n - установить правильные следы в дереве");
                 Console.WriteLine("* ESC - выход");
                 Console.Write("Ваш выбор - ");
                 symbol = Convert.ToChar(Console.ReadKey(true).KeyChar);
-            } while (symbol != 'c' && symbol != 'b' && symbol != 'p' && symbol != 'r' && symbol != 'h' && symbol != 'v' && symbol != 27);
+            } while (symbol != 'c' && symbol != 'b' && symbol != 'p' && symbol != 'r' && symbol != 'h' && symbol != 'v' && symbol != 27 && symbol != 'd' && symbol != 'n');
             return symbol;
         }
         //
-        // Сохранить в input.dat
+        // Сохранить в input.dat (нерекурсивный алгоритм обхода дерева по принципу лево-корень-право)
         //
+        /// <summary>
+        /// Сохранит дерево в одну строку в указанный файл
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="fileName"></param>
         public static void SaveTreeInFile(AVLTree<int> tree, string fileName)
         {
             StreamWriter writer = new StreamWriter(fileName);
-            
+            tree.PutRightBalance(tree.Root);
+            Stack<AVLTree<int>.Node<int>> stack = new Stack<AVLTree<int>.Node<int>>();
+            AVLTree<int>.Node<int> currentNode = tree.Root;
+            if (currentNode.IsLeaf())
+                writer.Write(currentNode.Key + " ");
+            while (!(currentNode == null && stack.Count == 0))
+            {
+                if (currentNode != null)
+                {
+                    stack.Push(currentNode);
+                    currentNode = currentNode.LeftChild;
+                }
+                else
+                {
+                    currentNode = stack.Pop();
+                    writer.Write(currentNode.Key + " // ");
+                    currentNode = currentNode.RightChild;
+                }
+            }
+            writer.Close();
+        }
+        public static void AddLinksTableToFile(AVLTree<int> tree, string fileName)
+        {
+            if (tree.Root == null)
+                return;
+            StreamWriter writer = new StreamWriter(fileName, true);
+            if (writer == null)
+                throw new FileNotFoundException("Файл " + fileName + " не найден");
+            Stack<AVLTree<int>.Node<int>> stack = new Stack<AVLTree<int>.Node<int>>();
+            AVLTree<int>.Node<int> currentNode = tree.Root;
+            writer.WriteLine("\n");
+            writer.WriteLine("==========Корень данного дерева==========\n");
+            writer.WriteLine("Значение ключа = " + tree.Root.Key + " Данные = " + tree.Root.Data);
+            if (tree.Root.LeftChild.IsExist())
+                writer.WriteLine("Потомок слева существует: ключ = " + tree.Root.LeftChild.Key + " Данные = " + tree.Root.LeftChild.Data);
+            else
+                writer.WriteLine("Потомков слева нет");
+            if (tree.Root.RightChild.IsExist())
+                writer.WriteLine("Потомок справа существует: ключ = " + tree.Root.RightChild.Key + " Данные = " + tree.Root.RightChild.Data);
+            else
+                writer.WriteLine("Потомков справа нет");
+            writer.WriteLine("\n");
+            writer.WriteLine("================Таблица ссылок в данном экземпляре авл-дерева==================\n");
+            writer.WriteLine("| Значение в узле + след|  Левый потомок|  Правый потомок|\n");
+            while (!(currentNode == null && stack.Count == 0))
+            {
+                if (currentNode != null)
+                {
+                    stack.Push(currentNode);
+                    currentNode = currentNode.LeftChild;
+                }
+                else
+                {
+                    currentNode = stack.Pop();
+                    writer.Write("  " + currentNode.Key + " \t" + "\"" + currentNode.Trace + "\"" + " \t\t");
+                    if (currentNode.LeftChild != null)
+                        writer.Write("  " + currentNode.LeftChild.Key + " \t" + "\"" + currentNode.LeftChild.Trace + "\"" + " \t\t");
+                    else
+                        writer.Write("\t нет\t\t");
+                    if (currentNode.RightChild != null)
+                        writer.Write("  " + currentNode.RightChild.Key + " \t" + "\"" + currentNode.RightChild.Trace + "\"" + " \n\n");
+                    else
+                        writer.Write("\t нет\n\n");
+                    currentNode = currentNode.RightChild;
+                }
+            }
             writer.Close();
         }
         //
@@ -133,7 +202,7 @@ namespace AlgLab7
             {
                 if (desiredTrace.Substring(0, currentTrace.Length) == currentTrace)
                 {
-                    if (desiredTrace[currentTrace.Length + 1] == '1')
+                    if (desiredTrace[currentTrace.Length] == '1')
                         isEquals = 1;                     // идем вправо
                     else if (desiredTrace[currentTrace.Length] == '0')
                         isEquals = -1;               // идем влево
@@ -142,6 +211,23 @@ namespace AlgLab7
                     return -2;     // значит такого следа нет вообще
             }
             return isEquals;
+        }
+        /// <summary>
+        /// Указывет, является ли данная строка следом
+        /// </summary>
+        /// <param name="trace"></param>
+        /// <returns></returns>
+        public static bool IsTrace(string trace)
+        {
+            if (trace == null || trace.Length == 0)
+                return false;
+            if (trace[0] != '1')
+                return false;
+            int lenght = trace.Length;
+            for (int i = 1; i < lenght; i++)
+                if (trace[i] < '0' || trace[i] > '1')
+                    return false;
+            return true;
         }
     }
 }
