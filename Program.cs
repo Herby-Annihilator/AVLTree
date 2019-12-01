@@ -11,6 +11,7 @@ namespace AlgLab7
         static void Main(string[] args)
         {
             bool goOut;
+            bool rewriteOutput = true;
             AVLTree<int> avlTree = new AVLTree<int>();
             do
             {
@@ -35,12 +36,27 @@ namespace AlgLab7
                                 avlTree.Add(random.Next(-50, 50), random.Next(-50, 50));
                             random = null;
                             Subroutines.SaveTreeInFile(avlTree, "input.dat");
+                            if (rewriteOutput == true)
+                            {
+                                rewriteOutput = false;
+                                File.Delete("output.dat");
+                            }
                             StreamWriter writer = new StreamWriter("output.dat", true);
                             writer.WriteLine("===============================================================================");
                             writer.WriteLine("После добавления узлов получилось дерево следующего вида\n");
                             writer.WriteLine("===============================================================================");
                             writer.Close();
                             Subroutines.AddFromFileToFile("input.dat", "output.dat");
+                            try
+                            {
+                                Subroutines.AddLinksTableToFile(avlTree, "output.dat");
+                            }
+                            catch (FileNotFoundException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
                             Console.WriteLine("\nДобавление прошло успешно, нажмите что-нибудь!");
                             Console.ReadKey();
                             break;
@@ -68,12 +84,27 @@ namespace AlgLab7
                                 avlTree.Add(nodeKey, nodeKey);
                             }
                             Subroutines.SaveTreeInFile(avlTree, "input.dat");
+                            if (rewriteOutput == true)
+                            {
+                                rewriteOutput = false;
+                                File.Delete("output.dat");
+                            }
                             StreamWriter writer = new StreamWriter("output.dat", true);
                             writer.WriteLine("===============================================================================");
                             writer.WriteLine("После добавления узлов получилось дерево следующего вида\n");
                             writer.WriteLine("===============================================================================");
                             writer.Close();
                             Subroutines.AddFromFileToFile("input.dat", "output.dat");
+                            try
+                            {
+                                Subroutines.AddLinksTableToFile(avlTree, "output.dat");
+                            }
+                            catch (FileNotFoundException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("\n===========Нажмите что-нибудь===========");
+                                Console.ReadKey();
+                            }
                             Console.WriteLine("\nДобавление прошло успешно, нажмите что-нибудь!");
                             Console.ReadKey();
                             break;
@@ -93,6 +124,8 @@ namespace AlgLab7
                             try
                             {
                                 avlTree.DeleteThisTrace(trace);
+                                Console.WriteLine("Удаление прошло успешно. Нажмите что-нибудь");
+                                Console.ReadKey();
                             }
                             catch(NullReferenceException e)
                             {
@@ -119,6 +152,11 @@ namespace AlgLab7
                                 Console.ReadKey();
                             }
                             StreamWriter writer = new StreamWriter("output.dat", true);
+                            if (rewriteOutput == true)
+                            {
+                                rewriteOutput = false;
+                                File.Delete("output.dat");
+                            }
                             writer.WriteLine("===============================================================================");
                             writer.WriteLine("После удаления узла со следом " + trace + " получилось дерево следующего вида\n");
                             writer.WriteLine("===============================================================================");
@@ -133,8 +171,6 @@ namespace AlgLab7
                                 Console.WriteLine("\n===========Нажмите что-нибудь===========");
                                 Console.ReadKey();
                             }
-                            Console.WriteLine("Удаление прошло успешно. Нажмите что-нибудь");
-                            Console.ReadKey();
                             break;
                         }
                     //

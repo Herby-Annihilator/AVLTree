@@ -101,9 +101,9 @@ namespace AlgLab7
                     else
                         writer.Write("\t нет\t\t");
                     if (currentNode.RightChild != null)
-                        writer.Write("  " + currentNode.RightChild.Key + " \t" + "\"" + currentNode.RightChild.Trace + "\"" + " \n\n");
+                        writer.Write("  " + currentNode.RightChild.Key + " \t" + "\"" + currentNode.RightChild.Trace + "\"" + " \n\n" + writer.NewLine);
                     else
-                        writer.Write("\t нет\n\n");
+                        writer.Write("\t нет\n\n" + writer.NewLine);
                     currentNode = currentNode.RightChild;
                 }
             }
