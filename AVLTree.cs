@@ -396,10 +396,19 @@ namespace AlgLab7
                 currentNode.LeftChild = FindMinNode(currentNode.LeftChild, ref minNode);
                 currentNode.BalanceFactor = GetRelativeHeight(currentNode.RightChild) - GetRelativeHeight(currentNode.LeftChild);
                 if (currentNode.BalanceFactor == -2)
+                {
                     if (currentNode.LeftChild.BalanceFactor == -1)
                         currentNode = RightRotation(currentNode);
                     else if (currentNode.LeftChild.BalanceFactor == 1)
                         currentNode = LeftRightRotation(currentNode);
+                }
+                else if (currentNode.BalanceFactor == 2)       // сначала не дописал вот этот фрагмент
+                {
+                    if (currentNode.RightChild.BalanceFactor == -1)
+                        currentNode = RightLeftRotation(currentNode);
+                    else if (currentNode.RightChild.BalanceFactor == 1)
+                        currentNode = LeftRotation(currentNode);
+                }
             }
             else
             {
@@ -424,14 +433,14 @@ namespace AlgLab7
                 throw new InvalidOperationException("Ошибка балансировки");
             if (currentNode.BalanceFactor == -2)
             {
-                if (currentNode.LeftChild.BalanceFactor == -1)
+                if (currentNode.LeftChild.BalanceFactor == -1 || currentNode.LeftChild.BalanceFactor == 0)
                     currentNode = RightRotation(currentNode);
                 else
                     currentNode = LeftRightRotation(currentNode);
             }
             else if (currentNode.BalanceFactor == 2)
             {
-                if (currentNode.RightChild.BalanceFactor == 1)
+                if (currentNode.RightChild.BalanceFactor == 1 || currentNode.RightChild.BalanceFactor == 0)
                     currentNode = LeftRotation(currentNode);
                 else
                     currentNode = RightLeftRotation(currentNode);
